@@ -1,0 +1,194 @@
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+  margin: 0;
+  padding: 20px;
+  color: #333;
+}
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+.header {
+  padding: 25px 30px;
+  border-bottom: 1px solid #eee;
+  text-align: center;
+}
+.header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+.content { padding: 25px 20px; }
+
+.input-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.date-time-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 600px) {
+  .input-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .date-time-group {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .content { padding: 20px 15px; }
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+label {
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #555;
+  font-size: 0.95rem;
+}
+input, select {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid #ddd;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  background: #f8f9fa;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+input[type="date"], input[type="time"] {
+  padding-right: 10px;
+}
+input:focus, select:focus {
+  outline: none;
+  border-color: #007bff;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(0,123,255,0.15);
+}
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 12px;
+}
+
+.buttons {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 35px 0;
+}
+button {
+  padding: 14px 32px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 150px;
+}
+button.primary { background: #007bff; color: white; }
+button.primary:hover { background: #0056b3; }
+button.secondary { background: #e3f2fd; color: #007bff; }
+button.secondary:hover { background: #bbdefb; }
+button.reset { background: #f8f9fa; color: #6c757d; border: 1.5px solid #dee2e6; }
+button.reset:hover { background: #e9ecef; }
+
+.result {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 16px;
+  padding: 25px;
+  margin-top: 20px;
+  display: none;
+}
+.timezone { text-align: center; color: #6c757d; margin-bottom: 15px; font-size: 0.9rem; }
+.result-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px dashed #dee2e6;
+  font-size: 1.05rem;
+}
+.result-item:last-child { border-bottom: none; }
+.label { color: #555; }
+.value { font-weight: 600; }
+.end-date-red { color: #dc3545; }
+
+.calendar {
+  margin-top: 35px;
+  text-align: center;
+  display: none;
+}
+.calendar-header {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #333;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+th {
+  background: #007bff;
+  color: white;
+  padding: 14px;
+  font-weight: 600;
+}
+td {
+  height: 80px;
+  vertical-align: top;
+  padding: 10px;
+  border: 1px solid #eee;
+}
+.day-number {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+}
+.time-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+.start-time { background: #e3f2fd; color: #007bff; }
+.end-time { background: #dc3545; color: white; }
+.highlight-start { background: #e3f2fd !important; }
+.highlight-end { background: #fce8e6 !important; }
+.end-circle {
+  background: #dc3545;
+  color: white;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 50%;
+  display: inline-block;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+.sunday { color: #dc3545; }
+.outside { color: #ccc; opacity: 0.5; }

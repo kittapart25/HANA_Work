@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timeline Calculator + ปฏิทินแสดงเวลา</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>Timeline Calculator</h1>
+  </div>
+
+  <div class="content">
+
+    <div class="input-grid">
+      <div class="input-group" style="grid-column: 1 / -1;">
+        <label>เลือกเครื่อง</label>
+        <select id="machineType">
+          <option value="">-- เลือกเครื่อง --</option>
+          <option value="HTS">HTS</option>
+          <option value="THS">THS</option>
+          <option value="TMCL">TMCL</option>
+          <option value="TS">T/S</option>
+        </select>
+      </div>
+
+      <!-- กลุ่มวันที่ + เวลา (ปรับให้พอดีหน้าจอ) -->
+      <div class="date-time-group">
+        <div class="input-group">
+          <label>วันที่เริ่มต้น</label>
+          <input type="date" id="startDate">
+        </div>
+        <div class="input-group">
+          <label>เวลาเริ่มต้น</label>
+          <input type="time" id="startTime">
+        </div>
+      </div>
+
+      <div id="manualAdd" style="display: none; grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px;">
+        <div class="input-group">
+          <label>ต้องการเพิ่ม (ชั่วโมง)</label>
+          <input type="number" id="addHours" value="0" min="0">
+        </div>
+        <div class="input-group">
+          <label>ต้องการเพิ่ม (นาที)</label>
+          <input type="number" id="addMinutes" value="0" min="0">
+        </div>
+      </div>
+
+      <div id="cycleParams" style="display: none; grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px;">
+        <div class="input-group">
+          <label>Dwell time (นาที)</label>
+          <input type="number" id="dwell" min="0" step="0.1" value="0">
+        </div>
+        <div class="input-group">
+          <label>Transfer time (นาที)</label>
+          <input type="number" id="transfer" min="0" step="0.1" value="0">
+        </div>
+        <div class="input-group">
+          <label>Cycle (รอบ)</label>
+          <input type="number" id="cycle" min="1" value="1">
+        </div>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button class="primary" onclick="calculate()">คำนวณ</button>
+      <button class="secondary" onclick="setCurrentTime()">ตั้งเวลาเป็นปัจจุบัน</button>
+      <button class="reset" onclick="resetForm()">รีเซ็ต</button>
+    </div>
+
+    <div class="result" id="resultBox">
+      
+      
+      <div class="result-item">
+        <span class="label">วันที่-เวลาเริ่มต้น</span>
+        <span class="value" id="origDate"></span>
+      </div>
+      <div class="result-item">
+        <span class="label">เพิ่ม</span>
+        <span class="value" id="addedTime"></span>
+      </div>
+      <div class="result-item" id="endDateRow">
+        <span class="label">วันที่-เวลาสิ้นสุด</span>
+        <span class="value" id="endDate"></span>
+      </div>
+
+      <div class="calendar" id="calendarBox">
+        <div class="calendar-header" id="calendarMonth"></div>
+        <table id="calendarTable">
+          <tr><th>อา</th><th>จ</th><th>อ</th><th>พ</th><th>พฤ</th><th>ศ</th><th>ส</th></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
