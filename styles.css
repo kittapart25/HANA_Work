@@ -4,6 +4,7 @@ body {
   margin: 0;
   padding: 20px;
   color: #333;
+  -webkit-tap-highlight-color: transparent;
 }
 .container {
   max-width: 900px;
@@ -204,3 +205,75 @@ td {
 }
 .sunday { color: #dc3545; }
 .outside { color: #ccc; opacity: 0.5; }
+
+@media (max-width: 768px) {
+  .container {
+    max-width: none;
+    margin: 0;
+    border-radius: 0;
+  }
+  .header {
+    padding: 20px 20px;
+  }
+  .header h1 {
+    font-size: 1.5rem;
+  }
+  .content {
+    padding: 20px 20px;
+  }
+  .buttons {
+    gap: 12px;
+  }
+  button {
+    min-width: 140px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 10px;
+  }
+  .header {
+    padding: 15px 15px;
+  }
+  .header h1 {
+    font-size: 1.3rem;
+  }
+  .content {
+    padding: 15px 15px;
+  }
+  .input-grid {
+    gap: 12px;
+  }
+  .buttons {
+    gap: 10px;
+  }
+  button {
+    padding: 12px 20px;
+    font-size: 0.9rem;
+    min-width: 100px;
+  }
+  .result {
+    padding: 20px;
+  }
+  .calendar {
+    overflow-x: auto;
+  }
+  .calendar-header {
+    font-size: 1.3rem;
+  }
+  table {
+    font-size: 0.9rem;
+  }
+  th, td {
+    padding: 8px;
+    height: 60px;
+  }
+  .day-number {
+    font-size: 0.9rem;
+  }
+  .time-label {
+    font-size: 0.75rem;
+    padding: 3px 6px;
+  }
+}
