@@ -48,7 +48,7 @@ function calculate() {
     addedHours = Math.floor(totalAddedMin / 60);
     addedMinutes = totalAddedMin % 60;
 
-    addedDesc = `Dwell: ${dwell} นาที ×2, Transfer: ${transfer} นาที ×2, Cycle: ${cycles} รอบ, รวม`;
+   
   } else {
     addedHours = parseInt(document.getElementById('addHours').value) || 0;
     addedMinutes = parseInt(document.getElementById('addMinutes').value) || 0;
@@ -65,11 +65,18 @@ function calculate() {
   const formatThaiDate = (d) => {
     const dayNum = d.getDate();
     const month = thaiMonths[d.getMonth()];
-    const yearBE = d.getFullYear() + 543;
+    const year = d.getFullYear();
     const weekday = days[d.getDay()];
     const hour = String(d.getHours()).padStart(2, '0');
     const minute = String(d.getMinutes()).padStart(2, '0');
-    return `${dayNum} ${month} ${yearBE} ${hour}:${minute} (${weekday})`;
+    return `${dayNum} ${month} ${year} ${hour}:${minute} (${weekday})`;
+  };
+
+  const formatStartDate = (d) => {
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const yyyy = d.getFullYear();
+    return `${dd} / ${mm} / ${yyyy}`;
   };
 
   document.getElementById('origDate').textContent = formatThaiDate(startDateGlobal);
@@ -102,7 +109,7 @@ function generateCalendar(year, month, startDate, endDate, startTimeStr, endTime
   const thaiMonths = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
                       'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
 
-  document.getElementById('calendarMonth').textContent = `${thaiMonths[month]} ${year + 543}`;
+  document.getElementById('calendarMonth').textContent = `${thaiMonths[month]} ${year}`;
 
   let table = '<tr><th>วันอาทิตย์</th><th>วันจันทร์</th><th>วันอังคาร</th><th>วันพุธ</th><th>วันพฤหัสบดี</th><th>วันศุกร์</th><th>วันเสาร์</th></tr><tr>';
   for (let i = 0; i < firstDay; i++) table += '<td class="outside"></td>';
