@@ -188,10 +188,11 @@ td {
   padding: 4px 8px;
   border-radius: 6px;
 }
-.start-time { background: #e3f2fd; color: #007bff; }
+.start-time { background: #e3f2fd; color: #0362c8; }
 .end-time { background: #dc3545; color: white; }
 .highlight-start { background: #e3f2fd !important; }
 .highlight-end { background: #fce8e6 !important; }
+.highlight-range { border: 2px solid #ffc107; border-radius: 5px; }
 .end-circle {
   background: #dc3545;
   color: white;

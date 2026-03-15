@@ -8,6 +8,13 @@ function toggleFields() {
   const val = machineSelect.value;
   document.getElementById('manualAdd').style.display = (val && val !== 'TMCL' && val !== 'TS') ? 'grid' : 'none';
   document.getElementById('cycleParams').style.display = (val === 'TMCL' || val === 'TS') ? 'grid' : 'none';
+  if (val === 'TS') {
+    document.getElementById('transfer').value = '1';
+    document.getElementById('transfer').disabled = true;
+  } else if (val === 'TMCL') {
+    document.getElementById('transfer').value = '0';
+    document.getElementById('transfer').disabled = false;
+  }
 }
 
 function calculate() {
@@ -36,7 +43,8 @@ function calculate() {
 
   if (machine === 'TMCL' || machine === 'TS') {
     const dwell = parseFloat(document.getElementById('dwell').value) || 0;
-    const transfer = parseFloat(document.getElementById('transfer').value) || 0;
+    let transfer = parseFloat(document.getElementById('transfer').value) || 0;
+    if (machine === 'TS') transfer = 1;
     const cycles = parseInt(document.getElementById('cycle').value) || 1;
 
     if (cycles < 1) {
@@ -48,19 +56,23 @@ function calculate() {
     addedHours = Math.floor(totalAddedMin / 60);
     addedMinutes = totalAddedMin % 60;
 
+    const coldTemp = document.getElementById('coldTemp').value || '0';
+    const hotTemp = document.getElementById('hotTemp').value || '0';
+    document.getElementById('condition').textContent = ` (${coldTemp} °C / ${hotTemp} °C , Dwell: ${dwell} Min, Transfer: ${transfer} min, Cycle: ${cycles})`;
    
   } else {
     addedHours = parseInt(document.getElementById('addHours').value) || 0;
     addedMinutes = parseInt(document.getElementById('addMinutes').value) || 0;
     addedDesc = '';
+    document.getElementById('condition').textContent = '';
   }
 
   endDateGlobal.setHours(endDateGlobal.getHours() + addedHours);
   endDateGlobal.setMinutes(endDateGlobal.getMinutes() + addedMinutes);
 
-  const days = ['วันอาทิตย์', 'วันจันทร์', 'วันอังคาร', 'วันพุธ', 'วันพฤหัสบดี', 'วันศุกร์', 'วันเสาร์'];
-  const thaiMonths = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
-                      'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+  const days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+  const thaiMonths = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE',
+                      'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
 
   const formatThaiDate = (d) => {
     const dayNum = d.getDate();
@@ -80,9 +92,8 @@ function calculate() {
   };
 
   document.getElementById('origDate').textContent = formatThaiDate(startDateGlobal);
-  document.getElementById('addedTime').textContent = `${addedDesc} ${addedHours} ชั่วโมง ${addedMinutes} นาที`;
+  document.getElementById('addedTime').textContent = `${addedDesc} ${addedHours} Hours ${addedMinutes} Minutes`;
   document.getElementById('endDate').textContent = formatThaiDate(endDateGlobal);
-
   const endEl = document.getElementById('endDate');
   if (endDateGlobal.getDay() === 0) {
     endEl.classList.add('end-date-red');
@@ -106,23 +117,25 @@ function calculate() {
 function generateCalendar(year, month, startDate, endDate, startTimeStr, endTimeStr) {
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const thaiMonths = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
-                      'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+  const thaiMonths = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE',
+                      'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
 
   document.getElementById('calendarMonth').textContent = `${thaiMonths[month]} ${year}`;
 
-  let table = '<tr><th>วันอาทิตย์</th><th>วันจันทร์</th><th>วันอังคาร</th><th>วันพุธ</th><th>วันพฤหัสบดี</th><th>วันศุกร์</th><th>วันเสาร์</th></tr><tr>';
+  let table = '<tr><th>SUN</th><th>MON</th><th>TUE</th><th>WED</th><th>THU</th><th>FRI</th><th>SAT</th></tr><tr>';
   for (let i = 0; i < firstDay; i++) table += '<td class="outside"></td>';
 
   for (let day = 1; day <= daysInMonth; day++) {
     const currentDate = new Date(year, month, day);
     const isStart = startDate && currentDate.toDateString() === startDate.toDateString();
     const isEnd = endDate && currentDate.toDateString() === endDate.toDateString();
+    const isInRange = startDate && endDate && currentDate >= startDate && currentDate <= endDate;
     const isSunday = currentDate.getDay() === 0;
 
     let cellContent = `<div class="day-number ${isSunday ? 'sunday' : ''}">${day}</div>`;
 
     if (isStart && !isEnd) {
+      cellContent = `<div class="day-number start-circle">${day}</div>`;
       cellContent += `<div class="time-label start-time">${startTimeStr}</div>`;
     }
     if (isEnd) {
@@ -130,7 +143,9 @@ function generateCalendar(year, month, startDate, endDate, startTimeStr, endTime
       cellContent += `<div class="time-label end-time">${endTimeStr}</div>`;
     }
 
-    let cellClass = isStart && !isEnd ? 'highlight-start' : isEnd ? 'highlight-end' : '';
+    let cellClass = isInRange ? 'highlight-range' : '';
+    if (isStart && !isEnd) cellClass += ' highlight-start';
+    else if (isEnd) cellClass += ' highlight-end';
 
     table += `<td class="${cellClass}">${cellContent}</td>`;
 
@@ -158,8 +173,11 @@ function resetForm() {
   document.getElementById('startTime').value = '';
   document.getElementById('addHours').value = '0';
   document.getElementById('addMinutes').value = '0';
+  document.getElementById('coldTemp').value = '';
+  document.getElementById('hotTemp').value = '';
   document.getElementById('dwell').value = '0';
   document.getElementById('transfer').value = '0';
+  document.getElementById('transfer').disabled = false;
   document.getElementById('cycle').value = '1';
   toggleFields();
   document.getElementById('resultBox').style.display = 'none';
