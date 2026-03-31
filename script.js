@@ -67,6 +67,13 @@ function calculate() {
     document.getElementById('condition').textContent = '';
   }
 
+  const conditionRow = document.getElementById('condition').parentElement;
+  if (machine === 'TMCL' || machine === 'TS') {
+    conditionRow.style.display = 'flex';
+  } else {
+    conditionRow.style.display = 'none';
+  }
+
   endDateGlobal.setHours(endDateGlobal.getHours() + addedHours);
   endDateGlobal.setMinutes(endDateGlobal.getMinutes() + addedMinutes);
 
@@ -114,16 +121,15 @@ function calculate() {
   );
 }
 
-function generateCalendar(year, month, startDate, endDate, startTimeStr, endTimeStr) {
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
+function renderCalendarMonth(year, month, startDate, endDate, startTimeStr, endTimeStr) {
   const thaiMonths = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE',
                       'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  document.getElementById('calendarMonth').textContent = `${thaiMonths[month]} ${year}`;
-
-  let table = '<tr><th>SUN</th><th>MON</th><th>TUE</th><th>WED</th><th>THU</th><th>FRI</th><th>SAT</th></tr><tr>';
-  for (let i = 0; i < firstDay; i++) table += '<td class="outside"></td>';
+  let html = `<div class="calendar-card"><div class="calendar-header">${thaiMonths[month]} ${year}</div><table>`;
+  html += '<tr><th>SUN</th><th>MON</th><th>TUE</th><th>WED</th><th>THU</th><th>FRI</th><th>SAT</th></tr><tr>';
+  for (let i = 0; i < firstDay; i++) html += '<td class="outside"></td>';
 
   for (let day = 1; day <= daysInMonth; day++) {
     const currentDate = new Date(year, month, day);
@@ -133,26 +139,48 @@ function generateCalendar(year, month, startDate, endDate, startTimeStr, endTime
     const isSunday = currentDate.getDay() === 0;
 
     let cellContent = `<div class="day-number ${isSunday ? 'sunday' : ''}">${day}</div>`;
+    let rangeLabel = '';
 
     if (isStart && !isEnd) {
       cellContent = `<div class="day-number start-circle">${day}</div>`;
-      cellContent += `<div class="time-label start-time">${startTimeStr}</div>`;
-    }
-    if (isEnd) {
+      cellContent += `<div class="time-label">${startTimeStr}</div>`;
+      rangeLabel = `<div class="range-label">Start</div>`;
+    } else if (isEnd && !isStart) {
       cellContent = `<div class="day-number end-circle">${day}</div>`;
-      cellContent += `<div class="time-label end-time">${endTimeStr}</div>`;
+      cellContent += `<div class="time-label">${endTimeStr}</div>`;
+      rangeLabel = `<div class="range-label">Finish</div>`;
+    } else if (isStart && isEnd) {
+      cellContent = `<div class="day-number end-circle">${day}</div>`;
+      cellContent += `<div class="time-label">${startTimeStr}</div>`;
+      rangeLabel = `<div class="range-label">Start / Finish</div>`;
     }
 
     let cellClass = isInRange ? 'highlight-range' : '';
-    if (isStart && !isEnd) cellClass += ' highlight-start';
-    else if (isEnd) cellClass += ' highlight-end';
+    if (isStart) cellClass += ' highlight-start';
+    if (isEnd) cellClass += ' highlight-end';
 
-    table += `<td class="${cellClass}">${cellContent}</td>`;
-
-    if ((firstDay + day) % 7 === 0) table += '</tr><tr>';
+    html += `<td class="${cellClass.trim()}">${cellContent}${rangeLabel}</td>`;
+    if ((firstDay + day) % 7 === 0) html += '</tr><tr>';
   }
-  table += '</tr>';
-  document.getElementById('calendarTable').innerHTML = table;
+  html += '</tr></table></div>';
+  return html;
+}
+
+function generateCalendar(year, month, startDate, endDate, startTimeStr, endTimeStr) {
+  const startMonth = startDate.getMonth();
+  const startYear = startDate.getFullYear();
+  const endMonth = endDate.getMonth();
+  const endYear = endDate.getFullYear();
+  const container = document.getElementById('calendarContainer');
+
+  if (startYear === endYear && startMonth === endMonth) {
+    const singleHtml = renderCalendarMonth(year, month, startDate, endDate, startTimeStr, endTimeStr);
+    container.innerHTML = `<div class="calendar-container single">${singleHtml}</div>`;
+  } else {
+    const firstMonthHtml = renderCalendarMonth(startYear, startMonth, startDate, endDate, startTimeStr, endTimeStr);
+    const secondMonthHtml = renderCalendarMonth(endYear, endMonth, startDate, endDate, startTimeStr, endTimeStr);
+    container.innerHTML = `<div class="calendar-container">${firstMonthHtml}${secondMonthHtml}</div>`;
+  }
 }
 
 function setCurrentTime() {
