@@ -1,4 +1,4 @@
-﻿let startDateGlobal = null;
+﻿﻿let startDateGlobal = null;
 let endDateGlobal = null;
 
 const machineSelect = document.getElementById('machineType');
@@ -44,6 +44,19 @@ function calculate() {
   if (machine === 'TMCL' || machine === 'TS') {
     const dwell = parseFloat(document.getElementById('dwell').value) || 0;
     let transfer = parseFloat(document.getElementById('transfer').value) || 0;
+    
+    if (machine === 'TMCL') {
+      const coldTempNum = parseFloat(document.getElementById('coldTemp').value) || 0;
+      const hotTempNum = parseFloat(document.getElementById('hotTemp').value) || 0;
+      const deltaTemp = Math.abs(hotTempNum - coldTempNum);
+      const minTransferTime = deltaTemp / 25;
+      
+      if (transfer < minTransferTime) {
+        alert(`แจ้งเตือน: กรุณาแก้ไข Condition\n\nTransfer time ที่คุณกำหนด (${transfer} นาที) ต่ำเกินไป\nอิงตาม Ramp rate ของเครื่อง TMCL (25 องศา/นาที) คุณต้องใช้เวลา Transfer ขั้นต่ำ ${minTransferTime.toFixed(1)} นาที`);
+        return;
+      }
+    }
+
     if (machine === 'TS') transfer = 1;
     const cycles = parseInt(document.getElementById('cycle').value) || 1;
 
@@ -148,11 +161,11 @@ function renderCalendarMonth(year, month, startDate, endDate, startTimeStr, endT
     } else if (isEnd && !isStart) {
       cellContent = `<div class="day-number end-circle">${day}</div>`;
       cellContent += `<div class="time-label">${endTimeStr}</div>`;
-      rangeLabel = `<div class="range-label">Finish</div>`;
+      rangeLabel = `<div class="range-label" style="background-color: #dc3545;">Finish</div>`;
     } else if (isStart && isEnd) {
       cellContent = `<div class="day-number end-circle">${day}</div>`;
       cellContent += `<div class="time-label">${startTimeStr}</div>`;
-      rangeLabel = `<div class="range-label">Start / Finish</div>`;
+      rangeLabel = `<div class="range-label" style="background-color: #dc3545;">Start / Finish</div>`;
     }
 
     let cellClass = isInRange ? 'highlight-range' : '';
@@ -211,13 +224,43 @@ function resetForm() {
   document.getElementById('resultBox').style.display = 'none';
 }
 
+function setupTimeInput() {
+  const timeInput = document.getElementById('startTime');
+  if (!timeInput) return;
+  
+  // เปลี่ยนประเภทเป็น text เพื่อหลีกเลี่ยงการแสดงผล AM/PM อัตโนมัติจาก Browser
+  timeInput.type = 'text';
+  timeInput.placeholder = 'HH:MM';
+  timeInput.maxLength = 5;
+
+  // สร้าง Input Mask ให้พิมพ์เฉพาะตัวเลขและแทรก ':' อัตโนมัติ
+  timeInput.addEventListener('input', function(e) {
+    let val = e.target.value.replace(/\D/g, '');
+    if (val.length > 4) val = val.substring(0, 4);
+    
+    if (val.length > 2) {
+      e.target.value = val.substring(0, 2) + ':' + val.substring(2);
+    } else {
+      e.target.value = val;
+    }
+  });
+
+  // ตรวจสอบความถูกต้องของเวลาเมื่อกรอกเสร็จหรือคลิกออกนอกช่อง (Blur)
+  timeInput.addEventListener('blur', function(e) {
+    let val = e.target.value;
+    if (val === '') return;
+    
+    // ตรวจสอบรูปแบบ 24 ชั่วโมง (00:00 - 23:59)
+    const regex = /^([01]\d|2[0-3]):([0-5]\d)$/;
+    if (!regex.test(val)) {
+      alert('กรุณาระบุเวลาให้ถูกต้องในรูปแบบ 24 ชั่วโมง (00:00 - 23:59)\nเช่น 08:30 หรือ 15:45');
+      e.target.value = '';
+    }
+  });
+}
+
 window.onload = () => {
   toggleFields();
+  setupTimeInput();
   document.getElementById('resultBox').style.display = 'none';
 };
-
-
-
-
-
-
