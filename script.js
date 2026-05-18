@@ -52,7 +52,7 @@ function calculate() {
       const minTransferTime = deltaTemp / 23;
       
       if (transfer < minTransferTime) {
-        alert(`แจ้งเตือน: กรุณาแก้ไข Condition\n\nTransfer time ที่คุณกำหนด (${transfer} นาที) ต่ำเกินไป\nอิงตาม Ramp rate ของเครื่อง TMCL (25 องศา/นาที) คุณต้องใช้เวลา Transfer ขั้นต่ำ ${minTransferTime.toFixed(1)} นาที`);
+        alert(`แจ้งเตือน: กรุณาแก้ไข Condition\n\nTransfer time ที่คุณกำหนด (${transfer} นาที) ต่ำเกินไป\nอิงตาม Ramp rate ของเครื่อง TMCL (23 องศา/นาที) คุณต้องใช้เวลา Transfer ขั้นต่ำ ${minTransferTime.toFixed(1)} นาที`);
         return;
       }
     }
